@@ -6,4 +6,9 @@ An application I wrote fills in a form on olx.pl, motoring, Porsche and takes a 
 
 ## Created by Adrian Szklarski, start time 01.2023
 
+<br>
+<img src="images/app.png" alt="OlxPage">
+<br>
+
+<p style="text-align: center">First preview version of the application (in progress) </p>
 
