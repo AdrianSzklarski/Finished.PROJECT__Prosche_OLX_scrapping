@@ -1,5 +1,5 @@
 import tkinter as tk
-from PIL import Image
+from PIL import Image, ImageTk
 
 
 class Page:
@@ -9,6 +9,8 @@ class Page:
         # Calling up methods
         self.get_set_window()
         self.get_background()
+        self.get_selection_model()
+        self.get_start_photo()
 
     def get_set_window(self):
         ''' Main window settings '''
@@ -19,16 +21,54 @@ class Page:
         self.height = self.root.winfo_screenheight()
 
     def get_background(self):
-        self.back_canvas = tk.Canvas(self.root, width=(round(self.width/2)), height=1050, bg='white')
+        self.back_canvas = tk.Canvas(self.root, width=(round(self.width / 2)), height=1050, bg='white')
         self.back_canvas.place(x=0, y=0)
 
-        foto_logo = Image.open("/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Background.jpg")
-        image = foto_logo.resize((round(self.width/2), 1050), Image.ANTIALIAS)
-        image.save(fp="/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Background_copy.png")
+        foto_logo = Image.open("/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Porsche.jpg")
+        image = foto_logo.resize((round(self.width / 2), 1050), Image.ANTIALIAS)
+        image.save(fp="/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Background.png")
         self.logo = tk.PhotoImage(
-            file="/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Background_copy.png")
+            file="/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Background.png")
 
         self.back_canvas.create_image(0, 0, image=self.logo, anchor="nw")
+
+    def get_start_photo(self):
+        '''Main photo on page'''
+        link = f'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Porsche.jpg'
+        image = Image.open(link).resize((600, 400), Image.ANTIALIAS)
+        image.save(fp=f'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Window.png')
+        link = f'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Window.png'
+        load = Image.open(link)
+        render = ImageTk.PhotoImage(load)
+        img = tk.Label(self.root, image=render)
+        img.image = render
+        img.place(x=300, y=60)
+
+    def get_selection_model(self):
+        ''' Addition of car model selection buttons for analysis '''
+        tk.Label(self.root, text="Select of model's Porsche: ").place(x=50, y=60)
+
+        self.radioValue = tk.IntVar(self.root, 0)
+        tk.Radiobutton(self.root, text="All", variable=self.radioValue, value=1, command=self.get_driver).place(x=50,
+                                                                                                                y=100)
+        tk.Radiobutton(self.root, text="Cayenne", variable=self.radioValue, value=2, command=self.get_driver).place(
+            x=50, y=140)
+        tk.Radiobutton(self.root, text="911", variable=self.radioValue, value=3, command=self.get_driver).place(x=50,
+                                                                                                                y=180)
+        tk.Radiobutton(self.root, text="Cayenne S", variable=self.radioValue, value=4, command=self.get_driver).place(
+            x=50, y=220)
+        tk.Radiobutton(self.root, text="Panamera", variable=self.radioValue, value=5, command=self.get_driver).place(
+            x=50, y=260)
+        tk.Radiobutton(self.root, text="Boxter", variable=self.radioValue, value=6, command=self.get_driver).place(x=50,
+                                                                                                                   y=300)
+        tk.Radiobutton(self.root, text="944", variable=self.radioValue, value=7, command=self.get_driver).place(x=50,
+                                                                                                                y=340)
+        tk.Radiobutton(self.root, text="Cayenne Turbo", variable=self.radioValue, value=8,
+                       command=self.get_driver).place(x=50, y=380)
+        tk.Radiobutton(self.root, text="More", variable=self.radioValue, value=9, command=self.get_driver).place(x=50,
+                                                                                                                 y=420)
+    def get_driver(self):
+        pass
 
 
 class Gallery(Page):
