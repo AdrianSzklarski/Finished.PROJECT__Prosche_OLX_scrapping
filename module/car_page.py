@@ -1,5 +1,8 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+import webbrowser
+
+from module.send_message import Contact
 
 
 class Page:
@@ -24,7 +27,7 @@ class Page:
         self.back_canvas = tk.Canvas(self.root, width=(round(self.width / 2)), height=1050, bg='white')
         self.back_canvas.place(x=0, y=0)
 
-        foto_logo = Image.open("/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Porsche.jpg")
+        foto_logo = Image.open("/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Porsche_background.jpg")
         image = foto_logo.resize((round(self.width / 2), 1050), Image.ANTIALIAS)
         image.save(fp="/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Background.png")
         self.logo = tk.PhotoImage(
@@ -77,15 +80,16 @@ class Gallery(Page):
     def __init__(self, root, *args, **kwargs):
         Page.__init__(self, root, *args, **kwargs)
         self.gallery = root
+        # self.contact = root
         self.counterUp = 0
         self.counterDown = 0
 
         menu = tk.Menu(self.gallery)
+
         file_menu = tk.Menu(menu)
         self.gallery.config(menu=file_menu)
         empty = tk.Menu(file_menu, tearoff=0)  # empty dock
         file_menu.add_cascade(label='                       '
-                                    '                       '
                                     '                       '
                                     '                       ', menu=empty)
 
@@ -106,13 +110,28 @@ class Gallery(Page):
         file_menu.add_command(label="Start >", command=self.get_start_icons)
         file_menu.add_command(label="| << Prev", command=self.get_prev_photo)
         file_menu.add_command(label="Reset app", command=self.get_reset)
-        file_menu.add_command(label="    ")
+        file_menu.add_command(label="  ")
         file_menu.add_command(label="Contact", command=self.get_contact_form)
 
         # Help
-        file_menu.add_cascade(label="Help", menu=helpmenu)
+        file_menu.add_cascade(label="  Help  ", menu=helpmenu)
         helpmenu.add_command(label="About program")
         helpmenu.add_command(label="About...")
+
+        # GitHub & Linkedin
+        file_menu.add_command(label=" GitHub  ", command=self.get_github)
+        file_menu.add_command(label=" Linkedin", command=self.get_linkedin)
+
+    def get_github(self):
+        webbrowser.open_new(r"https://github.com/AdrianSzklarski")
+
+    def get_linkedin(self):
+        webbrowser.open_new(r"https://www.linkedin.com/in/szklarskiadrian/")
+
+    def get_contact_form(self):
+        self.new_icon = tk.PanedWindow(orient='vertical')
+        Contact(self.new_icon)
+        self.new_icon.place(x=1000, y=60)
 
     def get_next_photo(self):
         pass
@@ -124,7 +143,4 @@ class Gallery(Page):
         pass
 
     def get_reset(self):
-        pass
-
-    def get_contact_form(self):
         pass
