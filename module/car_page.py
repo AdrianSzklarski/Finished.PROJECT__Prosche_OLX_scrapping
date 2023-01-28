@@ -1,6 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 import webbrowser
+import os, sys
 
 from module.send_message import Contact
 
@@ -70,6 +71,7 @@ class Page:
                        command=self.get_driver).place(x=50, y=380)
         tk.Radiobutton(self.root, text="More", variable=self.radioValue, value=9, command=self.get_driver).place(x=50,
                                                                                                                  y=420)
+
     def get_driver(self):
         pass
 
@@ -133,6 +135,10 @@ class Gallery(Page):
         Contact(self.new_icon)
         self.new_icon.place(x=1000, y=60)
 
+    def get_reset(self):
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
+
     def get_next_photo(self):
         pass
 
@@ -140,7 +146,4 @@ class Gallery(Page):
         pass
 
     def get_prev_photo(self):
-        pass
-
-    def get_reset(self):
         pass
