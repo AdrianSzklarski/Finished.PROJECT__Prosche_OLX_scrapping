@@ -1,4 +1,6 @@
 import tkinter as tk
+from PIL import Image
+
 
 class Page:
     def __init__(self, root, *args, **kwargs):
@@ -6,12 +8,28 @@ class Page:
 
         # Calling up methods
         self.get_set_window()
+        self.get_background()
 
     def get_set_window(self):
         ''' Main window settings '''
         self.root.title('Porsche Cars, Program Created by Adrian Szklarski, 01.2023')
         self.root.wm_attributes('-zoomed', True)
         self.root.resizable(width=False, height=False)
+        self.width = self.root.winfo_screenwidth()
+        self.height = self.root.winfo_screenheight()
+
+    def get_background(self):
+        self.back_canvas = tk.Canvas(self.root, width=(round(self.width/2)), height=1050, bg='white')
+        self.back_canvas.place(x=0, y=0)
+
+        foto_logo = Image.open("/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Background.jpg")
+        image = foto_logo.resize((round(self.width/2), 1050), Image.ANTIALIAS)
+        image.save(fp="/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Background_copy.png")
+        self.logo = tk.PhotoImage(
+            file="/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Background_copy.png")
+
+        self.back_canvas.create_image(0, 0, image=self.logo, anchor="nw")
+
 
 class Gallery(Page):
     '''Gallery window'''
@@ -70,5 +88,3 @@ class Gallery(Page):
 
     def get_contact_form(self):
         pass
-
-
