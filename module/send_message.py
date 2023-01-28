@@ -17,7 +17,7 @@ class Contact:
         '''Server settings'''
         sender = self.sender_box_entry.get()  # who sends an e-mail
         message = self.mess_box_entry.get('1.0', 'end')
-        receiver = "szklarski.adrian@gmail.com"
+        receiver = "address@gmail.com"
         login = "Adrian"
         password = "***"
 
