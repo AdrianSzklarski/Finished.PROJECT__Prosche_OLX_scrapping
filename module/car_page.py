@@ -55,26 +55,26 @@ class Page:
         tk.Label(self.root, text="Select of model's Porsche: ").place(x=50, y=60)
 
         self.radioValue = tk.IntVar(self.root, 0)
-        tk.Radiobutton(self.root, text="All", variable=self.radioValue, value=1, command=self.get_driver).place(x=50,
+        tk.Radiobutton(self.root, text="All", variable=self.radioValue, value=1, command=self.get_scrapping).place(x=50,
                                                                                                                 y=100)
-        tk.Radiobutton(self.root, text="Cayenne", variable=self.radioValue, value=2, command=self.get_driver).place(
+        tk.Radiobutton(self.root, text="Cayenne", variable=self.radioValue, value=2, command=self.get_scrapping).place(
             x=50, y=140)
-        tk.Radiobutton(self.root, text="911", variable=self.radioValue, value=3, command=self.get_driver).place(x=50,
+        tk.Radiobutton(self.root, text="911", variable=self.radioValue, value=3, command=self.get_scrapping).place(x=50,
                                                                                                                 y=180)
-        tk.Radiobutton(self.root, text="Cayenne S", variable=self.radioValue, value=4, command=self.get_driver).place(
+        tk.Radiobutton(self.root, text="Cayenne S", variable=self.radioValue, value=4, command=self.get_scrapping).place(
             x=50, y=220)
-        tk.Radiobutton(self.root, text="Panamera", variable=self.radioValue, value=5, command=self.get_driver).place(
+        tk.Radiobutton(self.root, text="Panamera", variable=self.radioValue, value=5, command=self.get_scrapping).place(
             x=50, y=260)
-        tk.Radiobutton(self.root, text="Boxter", variable=self.radioValue, value=6, command=self.get_driver).place(x=50,
+        tk.Radiobutton(self.root, text="Boxter", variable=self.radioValue, value=6, command=self.get_scrapping).place(x=50,
                                                                                                                    y=300)
-        tk.Radiobutton(self.root, text="944", variable=self.radioValue, value=7, command=self.get_driver).place(x=50,
+        tk.Radiobutton(self.root, text="944", variable=self.radioValue, value=7, command=self.get_scrapping).place(x=50,
                                                                                                                 y=340)
         tk.Radiobutton(self.root, text="Cayenne Turbo", variable=self.radioValue, value=8,
-                       command=self.get_driver).place(x=50, y=380)
-        tk.Radiobutton(self.root, text="More", variable=self.radioValue, value=9, command=self.get_driver).place(x=50,
+                       command=self.get_scrapping).place(x=50, y=380)
+        tk.Radiobutton(self.root, text="More", variable=self.radioValue, value=9, command=self.get_scrapping).place(x=50,
                                                                                                                  y=420)
 
-    def get_driver(self):
+    def get_scrapping(self):
         pass
 
 
@@ -84,7 +84,7 @@ class Gallery(Page):
     def __init__(self, root, *args, **kwargs):
         Page.__init__(self, root, *args, **kwargs)
         self.gallery = root
-        # self.contact = root
+        self.get_text_field()
         self.counterUp = 0
         self.counterDown = 0
 
@@ -188,3 +188,12 @@ class Gallery(Page):
         self.new_icons = tk.PanedWindow(orient='vertical')
         Icons(self.new_icons)
         self.new_icons.place(x=950, y=60)
+
+    def get_text_field(self):
+        self.new_text = tk.PanedWindow(orient='vertical')
+        self.new_text.place(x=300, y=560)
+        result = f'Information about the selected car:\n'
+        tb = tk.Text(self.new_text, height=22, width=75)
+        tb.pack(expand=True)
+        tb.insert('end', result)
+        tb.config(state='disabled')
