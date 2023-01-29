@@ -12,3 +12,10 @@ An application I wrote fills in a form on olx.pl, motoring, Porsche and takes a 
 
 <p style="text-align: center">First preview version of the application (in progress) </p>
 
+<br>
+<img src="images/app2.png" alt="OlxPage">
+<br>
+
+<p style="text-align: center">Second preview version of the application (in progress) </p>
+
+
