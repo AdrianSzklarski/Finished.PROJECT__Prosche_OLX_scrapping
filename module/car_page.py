@@ -1,11 +1,13 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+from tkinter import filedialog
 import webbrowser
-import os, sys
+import os, glob, sys
 
 from Selenium_Porsche.module.my_gallery import MyGalleryOfCars
 from Selenium_Porsche.module.send_message import ContactEmail
 from Selenium_Porsche.module.small_gal_icons import Icons
+from tkinter.filedialog import asksaveasfile
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
@@ -30,19 +32,18 @@ class Page:
         self.height = self.root.winfo_screenheight()
 
     def get_background(self):
-        self.back_canvas = tk.Canvas(self.root, width=(round(self.width / 2)), height=1050, bg='white')
+        self.back_canvas = tk.Canvas(self.root, width=(round(self.width / 2)), height=1050, bg='white')  #  (round(self.width / 2)), 1845
         self.back_canvas.place(x=0, y=0)
-
         foto_logo = Image.open("/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Porsche_background.jpg")
-        image = foto_logo.resize((round(self.width / 2), 1050), Image.ANTIALIAS)
+        image = foto_logo.resize((round(self.width / 2), 1050), Image.ANTIALIAS)  # (round(self.width / 2), 1845
         image.save(fp="/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Background.png")
         self.logo = tk.PhotoImage(
             file="/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Background.png")
-
         self.back_canvas.create_image(0, 0, image=self.logo, anchor="nw")
 
     def get_start_photo(self):
         '''Main photo on page'''
+        # car
         link = f'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Porsche.jpg'
         image = Image.open(link).resize((600, 400), Image.ANTIALIAS)
         image.save(fp=f'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Window.png')
@@ -52,6 +53,22 @@ class Page:
         img = tk.Label(self.root, image=render)
         img.image = render
         img.place(x=300, y=60)
+
+        # gallery
+        link = f'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/start_win_gallery.png'
+        load = Image.open(link)
+        render = ImageTk.PhotoImage(load)
+        img = tk.Label(self.root, image=render)
+        img.image = render
+        img.place(x=950, y=60)
+
+        # chart
+        link = f'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/start_win_chart.png'
+        load = Image.open(link)
+        render = ImageTk.PhotoImage(load)
+        img = tk.Label(self.root, image=render)
+        img.image = render
+        img.place(x=1370, y=560)
 
     def get_selection_model(self):
         ''' Addition of car model selection buttons for analysis '''
@@ -198,7 +215,7 @@ class Gallery(Page):
     def get_hist(self):
         frame = tk.Frame()
 
-        fig = Figure(figsize=(5, 3.83), dpi=100)
+        fig = Figure(figsize=(4.5, 3.83), dpi=100)
         # test function
         y = [i ** 2 for i in range(101)]
 
@@ -228,23 +245,56 @@ class Gallery(Page):
         self.tb = tk.Text(self.root, height=22, width=45)
         self.tb.place(x =950, y = 560)
 
-        result = f'My notes:\n'
+        result = f'My notes: \n'
         self.tb.insert('end', result)
 
-        open_btn = tk.Button(self.root, text="Open Text File", command=self.open_text)
+        open_btn = tk.Button(self.root, text="Open File", command=self.get_open_file)
         open_btn.place(x =950, y = 500)
+        open_btn = tk.Button(self.root, text="Open Last", command=self.get_open_last)
+        open_btn.place(x =1053, y = 500)
         save_btn = tk.Button(self.root, text="Save File", command=self.save_text)
-        save_btn.place(x =1100, y = 500)
+        save_btn.place(x =1157, y = 500)
+        save_btn = tk.Button(self.root, text="Clear", command=self.get_clear)
+        save_btn.place(x =1255, y = 500)
 
-    def open_text(self):
-        text_file = open("test.txt", "r")
+    def get_open_file(self):
+        self.file_photo = filedialog.askopenfilename(initialdir=os.getcwd(), filetypes=[("text", ".txt")])
+        pathh = tk.Entry(self.root)
+        pathh.insert(tk.END, self.file_photo)
+        tf = open(self.file_photo)
+        data = tf.read()
+        self.tb.insert(tk.END, data)
+        tf.close()
+
+    def get_open_last(self):
+        self.link = r'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/save_txt/file.txt'
+        text_file = open(self.link, "r")
         content = text_file.read()
-        self.tb.insert(tk.END, content)
+        self.tb.insert(tk.END, content[9:])
         text_file.close()
+
     def save_text(self):
-        text_file = open("test.txt", "w")
+        self.link = r'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/save_txt/file.txt'
+        f = asksaveasfile(initialfile='TXT Files',
+                          defaultextension=".txt", filetypes=[("All Files", "*.*"), ("Text Documents", "*.txt")],
+                          parent=self.root)
+        f.write(self.tb.get(1.0, tk.END))
+
+        text_file = open(self.link, "w")
         text_file.write(self.tb.get(1.0, tk.END))
         text_file.close()
+
+    def get_clear(self):
+        self.tb.delete(1.0, tk.END)
+        self.get_input_text_field()
+
+        dir_main = '/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/save_txt'
+        filelistMain = glob.glob(os.path.join(dir_main, "*"))
+        for files in filelistMain:
+            os.remove(files)
+
+
+
 
 
 

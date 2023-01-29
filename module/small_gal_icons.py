@@ -21,7 +21,8 @@ class Icons:
         [self.tableCars.append(cars) for cars in sickPaths]
         self.number = len(self.tableCars)
 
-        self.my_canvas = tk.Canvas(self.frame, width=900, height=400, bg='#d8d8d9',
+        # Dimensions of the window
+        self.my_canvas = tk.Canvas(self.frame, width=850, height=400, bg='#d8d8d9',
                                    scrollregion=(0, 0, 1000, SIZE_Y * round(self.number / 5)))
         vertibar = tk.Scrollbar(self.frame, orient=tk.VERTICAL)
         vertibar.pack(side=tk.RIGHT, fill=tk.Y)
