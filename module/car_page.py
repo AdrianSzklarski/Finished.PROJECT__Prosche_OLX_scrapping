@@ -88,6 +88,7 @@ class Gallery(Page):
         Page.__init__(self, root, *args, **kwargs)
         self.gallery = root
         self.get_text_field()
+        self.get_input_text_field()
         self.counterUp = 0
         self.counterDown = 0
 
@@ -222,3 +223,29 @@ class Gallery(Page):
         tb.pack(expand=True)
         tb.insert('end', result)
         tb.config(state='disabled')
+
+    def get_input_text_field(self):
+        self.tb = tk.Text(self.root, height=22, width=45)
+        self.tb.place(x =950, y = 560)
+
+        result = f'My notes:\n'
+        self.tb.insert('end', result)
+
+        open_btn = tk.Button(self.root, text="Open Text File", command=self.open_text)
+        open_btn.place(x =950, y = 500)
+        save_btn = tk.Button(self.root, text="Save File", command=self.save_text)
+        save_btn.place(x =1100, y = 500)
+
+    def open_text(self):
+        text_file = open("test.txt", "r")
+        content = text_file.read()
+        self.tb.insert(tk.END, content)
+        text_file.close()
+    def save_text(self):
+        text_file = open("test.txt", "w")
+        text_file.write(self.tb.get(1.0, tk.END))
+        text_file.close()
+
+
+
+
