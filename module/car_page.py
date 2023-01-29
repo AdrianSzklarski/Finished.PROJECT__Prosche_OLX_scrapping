@@ -7,6 +7,9 @@ from Selenium_Porsche.module.my_gallery import MyGalleryOfCars
 from Selenium_Porsche.module.send_message import ContactEmail
 from Selenium_Porsche.module.small_gal_icons import Icons
 
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
+NavigationToolbar2Tk)
 
 class Page:
     def __init__(self, root, *args, **kwargs):
@@ -188,6 +191,28 @@ class Gallery(Page):
         self.new_icons = tk.PanedWindow(orient='vertical')
         Icons(self.new_icons)
         self.new_icons.place(x=950, y=60)
+
+        self.get_hist()
+
+    def get_hist(self):
+        frame = tk.Frame()
+
+        fig = Figure(figsize=(5, 3.83), dpi=100)
+        # test function
+        y = [i ** 2 for i in range(101)]
+
+        plot = fig.add_subplot(111)
+        plot.plot(y)
+
+        canvas = FigureCanvasTkAgg(fig, master=self.root)
+        canvas.draw()
+
+        toolbar = NavigationToolbar2Tk(canvas, frame)
+        toolbar.update()
+
+        frame.place(x =1370, y = 500)
+        canvas.get_tk_widget().place(x =1370, y = 560)
+
 
     def get_text_field(self):
         self.new_text = tk.PanedWindow(orient='vertical')
