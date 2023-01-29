@@ -3,7 +3,9 @@ from PIL import Image, ImageTk
 import webbrowser
 import os, sys
 
-from module.send_message import Contact
+from Selenium_Porsche.module.my_gallery import MyGalleryOfCars
+from Selenium_Porsche.module.send_message import ContactEmail
+from Selenium_Porsche.module.small_gal_icons import Icons
 
 
 class Page:
@@ -132,7 +134,7 @@ class Gallery(Page):
 
     def get_contact_form(self):
         self.new_icon = tk.PanedWindow(orient='vertical')
-        Contact(self.new_icon)
+        ContactEmail(self.new_icon)
         self.new_icon.place(x=1000, y=60)
 
     def get_reset(self):
@@ -140,10 +142,49 @@ class Gallery(Page):
         os.execl(python, python, *sys.argv)
 
     def get_next_photo(self):
-        pass
+        self.lenght = MyGalleryOfCars(self.root).get_read_photo()
+        self.counterUp += 1
+        if self.counterUp <= self.lenght:
+            link = f'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/work_dir_scale/Porsche_{self.counterUp}.png'
+            load = Image.open(link)
+            render = ImageTk.PhotoImage(load)
+            img = tk.Label(self.root, image=render)
+            img.image = render
+            img.place(x=300, y=60)
 
-    def get_start_icons(self):
-        pass
+            self.new_text = tk.PanedWindow(orient='vertical')
+            self.new_text.place(x=300, y=560)
+            # name_adv = self.driver.find_elements(By.XPATH, '//*[@id="root"]/div[1]/div[3]/div[3]/div[1]/div[2]/div[2]/h1')
+            result = f'Test text{link}\n' \
+                # f'Name of adv: {self.name_adv}'
+            tb = tk.Text(self.new_text, height=11, width=75)
+            tb.pack(expand=True)
+            tb.insert('end', result)
+            tb.config(state='disabled')
+
+        elif self.get_prev_photo():
+            self.counterDown = self.counterUp
+        else:
+            self.counter = 0
 
     def get_prev_photo(self):
-        pass
+        self.lenght = MyGalleryOfCars(self.root).get_read_photo()
+        self.counterDown -= 1
+        calc = self.lenght + self.counterDown + 1
+        if calc >= 1:
+            link = f'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/work_dir_scale/Porsche_{calc}.png'
+            load = Image.open(link)
+            render = ImageTk.PhotoImage(load)
+            img = tk.Label(self.root, image=render)
+            img.image = render
+            img.place(x=300, y=60)
+        elif self.get_next_photo():
+            self.counterUp = self.counterDown
+        else:
+            self.counter = 0
+
+    def get_start_icons(self):
+        '''Arranging backgrounds for multi gallery'''
+        self.new_icons = tk.PanedWindow(orient='vertical')
+        Icons(self.new_icons)
+        self.new_icons.place(x=950, y=60)
