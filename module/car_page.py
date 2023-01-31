@@ -2,8 +2,11 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from tkinter import filedialog
 import webbrowser
-import os, glob, sys
+import os, glob, sys, time
+from os.path import join
 
+from Selenium_Porsche.module.about_program import AboutProgram
+from Selenium_Porsche.module.about_us import AboutProgramUs
 from Selenium_Porsche.module.my_gallery import MyGalleryOfCars
 from Selenium_Porsche.module.send_message import ContactEmail
 from Selenium_Porsche.module.small_gal_icons import Icons
@@ -11,7 +14,13 @@ from tkinter.filedialog import asksaveasfile
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
-NavigationToolbar2Tk)
+                                               NavigationToolbar2Tk)
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
+
 
 class Page:
     def __init__(self, root, *args, **kwargs):
@@ -23,6 +32,8 @@ class Page:
         self.get_selection_model()
         self.get_start_photo()
 
+        self.option = Options()
+
     def get_set_window(self):
         ''' Main window settings '''
         self.root.title('Porsche Cars, Program Created by Adrian Szklarski, 01.2023')
@@ -32,7 +43,8 @@ class Page:
         self.height = self.root.winfo_screenheight()
 
     def get_background(self):
-        self.back_canvas = tk.Canvas(self.root, width=(round(self.width / 2)), height=1050, bg='white')  #  (round(self.width / 2)), 1845
+        self.back_canvas = tk.Canvas(self.root, width=(round(self.width / 2)), height=1050,
+                                     bg='white')  # (round(self.width / 2)), 1845
         self.back_canvas.place(x=0, y=0)
         foto_logo = Image.open("/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Porsche_background.jpg")
         image = foto_logo.resize((round(self.width / 2), 1050), Image.ANTIALIAS)  # (round(self.width / 2), 1845
@@ -75,27 +87,111 @@ class Page:
         tk.Label(self.root, text="Select of model's Porsche: ").place(x=50, y=60)
 
         self.radioValue = tk.IntVar(self.root, 0)
-        tk.Radiobutton(self.root, text="All", variable=self.radioValue, value=1, command=self.get_scrapping).place(x=50,
-                                                                                                                y=100)
-        tk.Radiobutton(self.root, text="Cayenne", variable=self.radioValue, value=2, command=self.get_scrapping).place(
-            x=50, y=140)
-        tk.Radiobutton(self.root, text="911", variable=self.radioValue, value=3, command=self.get_scrapping).place(x=50,
-                                                                                                                y=180)
-        tk.Radiobutton(self.root, text="Cayenne S", variable=self.radioValue, value=4, command=self.get_scrapping).place(
-            x=50, y=220)
-        tk.Radiobutton(self.root, text="Panamera", variable=self.radioValue, value=5, command=self.get_scrapping).place(
-            x=50, y=260)
-        tk.Radiobutton(self.root, text="Boxter", variable=self.radioValue, value=6, command=self.get_scrapping).place(x=50,
-                                                                                                                   y=300)
-        tk.Radiobutton(self.root, text="944", variable=self.radioValue, value=7, command=self.get_scrapping).place(x=50,
-                                                                                                                y=340)
-        tk.Radiobutton(self.root, text="Cayenne Turbo", variable=self.radioValue, value=8,
-                       command=self.get_scrapping).place(x=50, y=380)
-        tk.Radiobutton(self.root, text="More", variable=self.radioValue, value=9, command=self.get_scrapping).place(x=50,
-                                                                                                                 y=420)
+        tk.Radiobutton(self.root, text="All                                 "
+                       , variable=self.radioValue, value=1, command=self.get_scrapping).place(x=50, y=100)
+        tk.Radiobutton(self.root, text="Cayenne                       "
+                       , variable=self.radioValue, value=2, command=self.get_scrapping).place(x=50, y=140)
+        tk.Radiobutton(self.root, text="911                               "
+                       , variable=self.radioValue, value=3, command=self.get_scrapping).place(x=50, y=180)
+        tk.Radiobutton(self.root, text="Cayenne S                    "
+                       , variable=self.radioValue, value=4, command=self.get_scrapping).place(x=50, y=220)
+        tk.Radiobutton(self.root, text="Panamera                     "
+                       , variable=self.radioValue, value=5, command=self.get_scrapping).place(x=50, y=260)
+        tk.Radiobutton(self.root, text="Boxter                          "
+                       , variable=self.radioValue, value=6, command=self.get_scrapping).place(x=50, y=300)
+        tk.Radiobutton(self.root, text="944                               "
+                       , variable=self.radioValue, value=7, command=self.get_scrapping).place(x=50, y=340)
+        tk.Radiobutton(self.root, text="Cayenne Turbo             "
+                       , variable=self.radioValue, value=8, command=self.get_scrapping).place(x=50, y=380)
+        tk.Radiobutton(self.root, text="More                             "
+                       , variable=self.radioValue, value=9, command=self.get_scrapping).place(x=50, y=420)
 
     def get_scrapping(self):
-        pass
+        ''' Scrapping the olx page for Porsche '''
+        driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.option)
+        driver.get('https://www.olx.pl/d/motoryzacja/samochody/porsche/')
+        driver.maximize_window()
+        driver.find_element(By.ID, 'onetrust-accept-btn-handler').click()  # Cookies
+        driver.find_element(By.CLASS_NAME, 'css-fb37n3').click()  # css-fb37n3  css-mf5jvh Arrow down in models
+
+        driver.find_element(By.XPATH,
+                            '//*[@id="root"]/div[1]/div[2]/form/div[3]/div[1]/div/div[3]/div/div/div[2]/div/div[' + str(
+                                self.radioValue.get()) + ']/label/input').click()
+
+        # print(driver.page_source)
+        link = r'?search%5Bfilter_enum_model%5D%5B0%5D'
+        if True:
+            if self.radioValue.get() == 1:
+                self.link = None
+                self.name = 'All'
+            elif self.radioValue.get() == 2:
+                self.link = f'{link}=cayenne'
+                self.name = 'Cayenne'
+            elif self.radioValue.get() == 3:
+                self.link = f'{link}=911'
+                self.name = '911'
+            elif self.radioValue.get() == 4:
+                self.link = f'{link}=cayenne-s'
+                self.name = 'Cayenne-S'
+            elif self.radioValue.get() == 5:
+                self.link = f'{link}=panamera'
+                self.name = 'Panamera'
+            elif self.radioValue.get() == 6:
+                self.link = f'{link}=boxster'
+                self.name = 'Boxter'
+            elif self.radioValue.get() == 7:
+                self.link = f'{link}=944'
+                self.name = '944'
+            elif self.radioValue.get() == 8:
+                self.link = f'{link}=cayenne-turbo'
+                self.name = 'Cayenne-Turbo'
+            elif self.radioValue.get() == 9:
+                self.link = f'{link}=inny'
+                self.name = 'Another'
+            else:
+                pass
+
+        #  Link-up for selected car model
+        driver.get(f'https://www.olx.pl/d/motoryzacja/samochody/porsche/{self.link}')
+        #  Information on the number of cars found
+        elements = driver.find_elements(By.XPATH,
+                                        '//*[@id="root"]/div[1]/div[2]/form/div[4]/div[2]/h3/div')
+
+        #  Unpacking the text and downloading the number
+        for element in elements:
+            number = element.text
+            oneNumber = []
+            for iterationNumber in number:
+                try:
+                    oneNumber.append(str(int(iterationNumber)))
+                except ValueError:
+                    pass
+
+            self.total = ''
+            for unpackList in range(0, len(oneNumber)):
+                self.total = self.total + oneNumber[unpackList]
+
+            answer = f'{self.total} Porsche {self.name} models found'
+            tk.Label(self.root, text=answer).place(x=50, y=460)
+
+        #  Downloading thumbnail images of cars
+        counter = 1
+        while True:
+            try:
+                div = driver.find_element(By.XPATH,
+                                          f'//*[@id="root"]/div[1]/div[2]/form/div[5]/div/div[2]/div[{counter}]').text
+                resultPath = join(r'/home/adrian/Pulpit/selenium_olx/work_dir', f'Porsche{counter}.png')
+                # print(div)
+                if div and counter != 9:
+                    link = f'//*[@id="root"]/div[1]/div[2]/form/div[5]/div/div[2]/div[{counter}]/a/div/div/div[1]/div[1]/div'
+                    with open(resultPath, 'ab') as file:
+                        time.sleep(0.5)
+                        file.write(driver.find_element(By.XPATH, link).screenshot_as_png)
+                else:
+                    pass
+            except:
+                break
+            counter += 1
 
 
 class Gallery(Page):
@@ -140,8 +236,8 @@ class Gallery(Page):
 
         # Help
         file_menu.add_cascade(label="  Help  ", menu=helpmenu)
-        helpmenu.add_command(label="About program")
-        helpmenu.add_command(label="About...")
+        helpmenu.add_command(label="About program", command=self.get_about)
+        helpmenu.add_command(label="About...", command=self.get_aboutUs)
 
         # GitHub & Linkedin
         file_menu.add_command(label=" GitHub  ", command=self.get_github)
@@ -161,6 +257,16 @@ class Gallery(Page):
     def get_reset(self):
         python = sys.executable
         os.execl(python, python, *sys.argv)
+
+    def get_about(self):
+        self.new_about = tk.PanedWindow(orient='vertical')
+        AboutProgram(self.new_about)
+        self.new_about.place(x=365, y=59.5)
+
+    def get_aboutUs(self):
+        self.new_aboutUs = tk.PanedWindow(orient='vertical')
+        AboutProgramUs(self.new_aboutUs)
+        self.new_aboutUs.place(x=365, y=59.5)
 
     def get_next_photo(self):
         self.lenght = MyGalleryOfCars(self.root).get_read_photo()
@@ -228,9 +334,8 @@ class Gallery(Page):
         toolbar = NavigationToolbar2Tk(canvas, frame)
         toolbar.update()
 
-        frame.place(x =1370, y = 500)
-        canvas.get_tk_widget().place(x =1370, y = 560)
-
+        frame.place(x=1370, y=500)
+        canvas.get_tk_widget().place(x=1370, y=560)
 
     def get_text_field(self):
         self.new_text = tk.PanedWindow(orient='vertical')
@@ -243,19 +348,19 @@ class Gallery(Page):
 
     def get_input_text_field(self):
         self.tb = tk.Text(self.root, height=22, width=45)
-        self.tb.place(x =950, y = 560)
+        self.tb.place(x=950, y=560)
 
         result = f'My notes: \n'
         self.tb.insert('end', result)
 
         open_btn = tk.Button(self.root, text="Open File", command=self.get_open_file)
-        open_btn.place(x =950, y = 500)
+        open_btn.place(x=950, y=500)
         open_btn = tk.Button(self.root, text="Open Last", command=self.get_open_last)
-        open_btn.place(x =1053, y = 500)
+        open_btn.place(x=1053, y=500)
         save_btn = tk.Button(self.root, text="Save File", command=self.save_text)
-        save_btn.place(x =1157, y = 500)
+        save_btn.place(x=1157, y=500)
         save_btn = tk.Button(self.root, text="Clear", command=self.get_clear)
-        save_btn.place(x =1255, y = 500)
+        save_btn.place(x=1255, y=500)
 
     def get_open_file(self):
         self.file_photo = filedialog.askopenfilename(initialdir=os.getcwd(), filetypes=[("text", ".txt")])
@@ -292,10 +397,3 @@ class Gallery(Page):
         filelistMain = glob.glob(os.path.join(dir_main, "*"))
         for files in filelistMain:
             os.remove(files)
-
-
-
-
-
-
-

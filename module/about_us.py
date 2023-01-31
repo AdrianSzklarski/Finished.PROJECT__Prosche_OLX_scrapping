@@ -12,9 +12,9 @@ class AboutProgramUs:
 
     def get_form(self):
         # A function describing the owner of the software, the developers and the license.
-        describe = """Program design:  Korbowo S.A.
+        describe = """Program design:  Adrian Szklarski
         Executed by: Szklarski Adrian
-        Owner:  Air-Concept Sp. z o.o
+        Owner:  Adrian Szklarski
 
                 License: GPL 
                 Warsaw, 2022 """
