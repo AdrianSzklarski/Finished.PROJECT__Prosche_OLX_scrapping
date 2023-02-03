@@ -3,10 +3,13 @@ from PIL import Image, ImageTk
 from tkinter import filedialog
 import webbrowser
 import os, glob, sys, time
+import requests
 from os.path import join
+
 
 from Selenium_Porsche.module.about_program import AboutProgram
 from Selenium_Porsche.module.about_us import AboutProgramUs
+from Selenium_Porsche.module.dirClear import get_clear_dir
 from Selenium_Porsche.module.my_gallery import MyGalleryOfCars
 from Selenium_Porsche.module.send_message import ContactEmail
 from Selenium_Porsche.module.small_gal_icons import Icons
@@ -20,6 +23,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 class Page:
@@ -31,8 +36,13 @@ class Page:
         self.get_background()
         self.get_selection_model()
         self.get_start_photo()
-
+        get_clear_dir()
         self.option = Options()
+        self.option.add_argument("--headless")
+
+
+        # # controll of interface of user
+        self.option.headless = False
 
     def get_set_window(self):
         ''' Main window settings '''
@@ -43,11 +53,11 @@ class Page:
         self.height = self.root.winfo_screenheight()
 
     def get_background(self):
-        self.back_canvas = tk.Canvas(self.root, width=(round(self.width / 2)), height=1050,
+        self.back_canvas = tk.Canvas(self.root, width=1845, height=1050,
                                      bg='white')  # (round(self.width / 2)), 1845
         self.back_canvas.place(x=0, y=0)
         foto_logo = Image.open("/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Porsche_background.jpg")
-        image = foto_logo.resize((round(self.width / 2), 1050), Image.ANTIALIAS)  # (round(self.width / 2), 1845
+        image = foto_logo.resize((1845, 1050), Image.ANTIALIAS)  # (round(self.width / 2), 1845
         image.save(fp="/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Background.png")
         self.logo = tk.PhotoImage(
             file="/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/background/Background.png")
@@ -107,7 +117,100 @@ class Page:
                        , variable=self.radioValue, value=9, command=self.get_scrapping).place(x=50, y=420)
 
     def get_scrapping(self):
-        pass
+        ''' Scrapping the olx page for Porsche '''
+        # driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.option)
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=self.option)
+        driver.implicitly_wait(1)
+        driver.get('https://www.olx.pl/d/motoryzacja/samochody/porsche/')
+        driver.maximize_window()
+        # driver.close()
+        driver.find_element(By.ID, 'onetrust-accept-btn-handler').click()  # Cookies
+        driver.find_element(By.CLASS_NAME, 'css-fb37n3').click()  # css-fb37n3  css-mf5jvh Arrow down in models
+        # driver.find_element(By.XPATH,
+        #                     '//*[@id="root"]/div[1]/div[2]/form/div[3]/div[1]/div/div[3]/div/div/div/div/svg').click()
+
+        driver.find_element(By.XPATH,
+                            '//*[@id="root"]/div[1]/div[2]/form/div[3]/div[1]/div/div[3]/div/div/div[2]/div/div[' + str(
+                                self.radioValue.get()) + ']/label/input').click()
+
+        link = r'?search%5Bfilter_enum_model%5D%5B0%5D'
+        if True:
+            if self.radioValue.get() == 1:
+                self.link = None
+                self.name = 'All'
+            elif self.radioValue.get() == 2:
+                self.link = f'{link}=cayenne'
+                self.name = 'Cayenne'
+            elif self.radioValue.get() == 3:
+                self.link = f'{link}=911'
+                self.name = '911'
+            elif self.radioValue.get() == 4:
+                self.link = f'{link}=cayenne-s'
+                self.name = 'Cayenne-S'
+            elif self.radioValue.get() == 5:
+                self.link = f'{link}=panamera'
+                self.name = 'Panamera'
+            elif self.radioValue.get() == 6:
+                self.link = f'{link}=boxster'
+                self.name = 'Boxter'
+            elif self.radioValue.get() == 7:
+                self.link = f'{link}=944'
+                self.name = '944'
+            elif self.radioValue.get() == 8:
+                self.link = f'{link}=cayenne-turbo'
+                self.name = 'Cayenne-Turbo'
+            elif self.radioValue.get() == 9:
+                self.link = f'{link}=inny'
+                self.name = 'Another'
+            else:
+                pass
+
+        #  Link-up for selected car model
+        link = f'https://www.olx.pl/d/motoryzacja/samochody/porsche/{self.link}'
+        dir_html = r'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/html/html.txt'
+        driver.get(link)
+        with open(dir_html, 'w') as f:
+            f.write(link)
+
+        #  Information on the number of cars found
+        elements = driver.find_elements(By.XPATH,
+                                        '//*[@id="root"]/div[1]/div[2]/form/div[4]/div[2]/h3/div')
+
+        #  Unpacking the text and downloading the number
+        for element in elements:
+            number = element.text
+            oneNumber = []
+            for iterationNumber in number:
+                try:
+                    oneNumber.append(str(int(iterationNumber)))
+                except ValueError:
+                    pass
+
+            self.total = ''
+            for unpackList in range(0, len(oneNumber)):
+                self.total = self.total + oneNumber[unpackList]
+
+            answer = f'{self.total} Porsche {self.name} models found'
+            tk.Label(self.root, text=answer).place(x=50, y=460)
+
+        #  Downloading thumbnail images of cars
+        counter = 1
+        while True:
+            try:
+                div = driver.find_element(By.XPATH, f'//*[@id="root"]/div[1]/div[2]/form/div[5]/div/div[2]/div[{counter}]').text
+                resultPath = join(r'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/work_dir', f'Porsche{counter}.png')
+                # print(div)
+                if div and counter != 9:
+                    link = f'//*[@id="root"]/div[1]/div[2]/form/div[5]/div/div[2]/div[{counter}]/a/div/div/div[1]/div[1]/div'
+                    with open(resultPath, 'ab') as file:
+                        time.sleep(0.5)
+                        file.write(driver.find_element(By.XPATH, link).screenshot_as_png)
+                else:
+                    pass
+            except:
+                break
+            counter += 1
+
 
 
 class Gallery(Page):

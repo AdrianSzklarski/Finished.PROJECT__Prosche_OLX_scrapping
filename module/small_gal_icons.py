@@ -33,9 +33,69 @@ class Icons:
 
         self.get_icons()
 
+
     def get_icons(self):
         '''Method to add a mini gallery'''
-        pass
+
+        # link = f'/home/adrian/Pulpit/selenium_olx/Start_Page.png'
+        # image = Image.open(link).resize((SIZE_X, SIZE_Y), Image.ANTIALIAS)
+        # image.save(fp=f'/home/adrian/Pulpit/selenium_olx/Start_Porsche2.png')
+        # link = f'/home/adrian/Pulpit/selenium_olx/Start_Porsche2.png'
+
+        # Scale images and download them for display
+        link = r'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/work_dir_scale/*png'
+        number_of_photos = len(glob.glob(link))
+        photos = glob.glob(link)
+        if number_of_photos != 0:
+            for no, n in enumerate(photos):
+                image = Image.open(n).resize((SIZE_X, SIZE_Y), Image.ANTIALIAS)
+                image.save(fp=f'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/work_one_car_scale/One_Car{no}.png')
+        else:
+            tk.Label(self.root, text='I am sorry, this directory is empty!').place(x=1000, y=156)
+
+        # scale photo
+        link = r'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/work_one_car_scale/*png'
+        cars = glob.glob(link)
+        print(cars)
+
+        self.tab_render = []
+        for car in cars:
+            load = Image.open(car)
+            self.render = ImageTk.PhotoImage(load)
+            img = tk.Label(self.root, image=self.render)
+            img.image = self.render
+            self.tab_render.append(self.render)
+
+        for render in range(0, len(self.tab_render)):
+            print(render)
+
+            self.counter = -1
+
+            if self.number <= 5:  # below 5 photos
+                for i in range(1, self.number + 1):
+                    self.my_canvas.create_image(-165 + i * 180, 10, image=self.render, anchor="nw")
+            elif self.number > 5:  # bver 5 photos
+                k = int()
+                y = []
+                for i in range(0, self.number + 1):
+                    if i % 5 == 0:  # switch to a new line
+                        k = i
+                    y.append(k)
+
+                for j in range(0, self.number):
+                    self.counter += 1  # to count 5 elements in a row
+                    if (15 + self.counter * 180) <= 735:
+                        # "y[j] * 25" move to a new row
+                        self.my_canvas.create_image(15 + self.counter * 180, 10 + y[j] * 25,
+                                                    image=self.tab_render[render],
+                                                    anchor="nw")
+                    else:
+                        self.counter = 0
+                        self.my_canvas.create_image(15 + self.counter * 180, 10 + y[j] * 25,
+                                                    image=self.tab_render[render - 1],
+                                                    anchor="nw")
+            else:
+                tk.Label(self.root, text='Wrong Value').place(x=1000, y=156)
 
 if __name__ == '__main__':
     root = tk.Tk()
