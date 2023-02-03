@@ -1,6 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-import glob
+import glob, os, shutil
+
 
 # Photo sizes
 SIZE_X = 150
@@ -11,7 +12,6 @@ SIZE_Y = 100
 class Icons:
     def __init__(self, root):
         self.root = root
-
         self.frame = tk.Frame(self.root)
         self.frame.grid()
 
@@ -24,26 +24,22 @@ class Icons:
         # Dimensions of the window
         self.my_canvas = tk.Canvas(self.frame, width=850, height=400, bg='#d8d8d9',
                                    scrollregion=(0, 0, 1000, SIZE_Y * round(self.number / 5)))
+
+        self.my_canvas.configure(scrollregion=(0, 0, 850, (self.number/5)*220))
         vertibar = tk.Scrollbar(self.frame, orient=tk.VERTICAL)
         vertibar.pack(side=tk.RIGHT, fill=tk.Y)
         vertibar.config(command=self.my_canvas.yview)
 
         self.my_canvas.config(yscrollcommand=vertibar.set)
         self.my_canvas.pack(expand=True, side=tk.LEFT, fill=tk.BOTH)
-
         self.get_icons()
 
 
     def get_icons(self):
         '''Method to add a mini gallery'''
 
-        # link = f'/home/adrian/Pulpit/selenium_olx/Start_Page.png'
-        # image = Image.open(link).resize((SIZE_X, SIZE_Y), Image.ANTIALIAS)
-        # image.save(fp=f'/home/adrian/Pulpit/selenium_olx/Start_Porsche2.png')
-        # link = f'/home/adrian/Pulpit/selenium_olx/Start_Porsche2.png'
-
         # Scale images and download them for display
-        link = r'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/work_dir_scale/*png'
+        link = r'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/work_dir/*png'
         number_of_photos = len(glob.glob(link))
         photos = glob.glob(link)
         if number_of_photos != 0:
@@ -56,7 +52,6 @@ class Icons:
         # scale photo
         link = r'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/work_one_car_scale/*png'
         cars = glob.glob(link)
-        print(cars)
 
         self.tab_render = []
         for car in cars:
@@ -66,34 +61,33 @@ class Icons:
             img.image = self.render
             self.tab_render.append(self.render)
 
-        for render in range(0, len(self.tab_render)):
-            print(render)
-
             self.counter = -1
 
-            if self.number <= 5:  # below 5 photos
-                for i in range(1, self.number + 1):
-                    self.my_canvas.create_image(-165 + i * 180, 10, image=self.render, anchor="nw")
-            elif self.number > 5:  # bver 5 photos
-                k = int()
-                y = []
-                for i in range(0, self.number + 1):
-                    if i % 5 == 0:  # switch to a new line
-                        k = i
-                    y.append(k)
+        if self.number <= 5:  # below 5 photos
+            for i in range(1, self.number + 1):
+                self.my_canvas.create_image(-165 + i * 180, 10, image=self.tab_render[i], anchor="nw")
+        elif self.number > 5:  # over 5 photos
+            k = int()
+            y = []
+            for i in range(0, self.number + 1):
+                if i % 5 == 0:  # switch to a new line
+                    k = i
+                y.append(k)
 
-                for j in range(0, self.number):
-                    self.counter += 1  # to count 5 elements in a row
-                    if (15 + self.counter * 180) <= 735:
-                        # "y[j] * 25" move to a new row
-                        self.my_canvas.create_image(15 + self.counter * 180, 10 + y[j] * 25,
-                                                    image=self.tab_render[render],
-                                                    anchor="nw")
-                    else:
-                        self.counter = 0
-                        self.my_canvas.create_image(15 + self.counter * 180, 10 + y[j] * 25,
-                                                    image=self.tab_render[render - 1],
-                                                    anchor="nw")
+            for j in range(0, self.number):
+                self.counter += 1  # to count 5 elements in a row
+                if (15 + self.counter * 180) <= 735:
+                    # "y[j] * 25" move to a new row
+                    self.my_canvas.create_image(15 + self.counter * 170, 10 + y[j] * 25,
+                                                image=self.tab_render[j],
+                                                anchor="nw")
+                    print(self.tab_render[j])
+                else:
+                    self.counter = 0
+                    self.my_canvas.create_image(15 + self.counter * 170, 10 + y[j] * 25,
+                                                image=self.tab_render[j],
+                                                anchor="nw")
+
             else:
                 tk.Label(self.root, text='Wrong Value').place(x=1000, y=156)
 

@@ -9,6 +9,7 @@ from os.path import join
 
 from Selenium_Porsche.module.about_program import AboutProgram
 from Selenium_Porsche.module.about_us import AboutProgramUs
+from Selenium_Porsche.module.create_dir import get_dir
 from Selenium_Porsche.module.dirClear import get_clear_dir
 from Selenium_Porsche.module.my_gallery import MyGalleryOfCars
 from Selenium_Porsche.module.send_message import ContactEmail
@@ -36,7 +37,8 @@ class Page:
         self.get_background()
         self.get_selection_model()
         self.get_start_photo()
-        get_clear_dir()
+
+        # get_clear_dir()
         self.option = Options()
         self.option.add_argument("--headless")
 
@@ -91,6 +93,12 @@ class Page:
         img = tk.Label(self.root, image=render)
         img.image = render
         img.place(x=1370, y=560)
+
+        # reset dir
+        get_clear_dir()
+
+        # create dir
+        get_dir()
 
     def get_selection_model(self):
         ''' Addition of car model selection buttons for analysis '''
@@ -211,7 +219,17 @@ class Page:
                 break
             counter += 1
 
+        for num, i in enumerate(range(1, int(self.total)+1)):
+                self.decribe_car = driver.find_elements(By.XPATH,
+                                                        f'//*[@id="root"]/div[1]/div[2]/form/div[5]/div/div[2]/div[{i}]')
 
+        self.get_small_icons()
+
+    def get_small_icons(self):
+        '''Arranging backgrounds for multi gallery'''
+        self.new_icons = tk.PanedWindow(orient='vertical')
+        Icons(self.new_icons)
+        self.new_icons.place(x=950, y=60)
 
 class Gallery(Page):
     '''Gallery window'''
@@ -247,7 +265,7 @@ class Gallery(Page):
 
         # Next & prev
         file_menu.add_command(label="Next >> |", command=self.get_next_photo)
-        file_menu.add_command(label="Start >", command=self.get_start_icons)
+        file_menu.add_command(label="Start >", command=self.get_start_calc)
         file_menu.add_command(label="| << Prev", command=self.get_prev_photo)
         file_menu.add_command(label="Reset app", command=self.get_reset)
         file_menu.add_command(label="  ")
@@ -300,9 +318,8 @@ class Gallery(Page):
 
             self.new_text = tk.PanedWindow(orient='vertical')
             self.new_text.place(x=300, y=560)
-            # name_adv = self.driver.find_elements(By.XPATH, '//*[@id="root"]/div[1]/div[3]/div[3]/div[1]/div[2]/div[2]/h1')
             result = f'Test text{link}\n' \
-                # f'Name of adv: {self.name_adv}'
+                     f'{self.decribe_car[0]}'
             tb = tk.Text(self.new_text, height=11, width=75)
             tb.pack(expand=True)
             tb.insert('end', result)
@@ -324,16 +341,25 @@ class Gallery(Page):
             img = tk.Label(self.root, image=render)
             img.image = render
             img.place(x=300, y=60)
+
+            self.new_text = tk.PanedWindow(orient='vertical')
+            self.new_text.place(x=300, y=560)
+            result = f'Test text{link}\n' \
+                     f'{self.decribe_car[0]}'
+            tb = tk.Text(self.new_text, height=11, width=75)
+            tb.pack(expand=True)
+            tb.insert('end', result)
+            tb.config(state='disabled')
         elif self.get_next_photo():
             self.counterUp = self.counterDown
         else:
             self.counter = 0
 
-    def get_start_icons(self):
-        '''Arranging backgrounds for multi gallery'''
-        self.new_icons = tk.PanedWindow(orient='vertical')
-        Icons(self.new_icons)
-        self.new_icons.place(x=950, y=60)
+    def get_start_calc(self):
+        # '''Arranging backgrounds for multi gallery'''
+        # self.new_icons = tk.PanedWindow(orient='vertical')
+        # Icons(self.new_icons)
+        # self.new_icons.place(x=950, y=60)
 
         self.get_hist()
 

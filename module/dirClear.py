@@ -9,10 +9,12 @@ def get_clear_dir():
     filelistMain = glob.glob(os.path.join(dir_main, "*"))
     filelistCopy = glob.glob(os.path.join(dir_copy, "*"))
 
+
     for files in filelistMain:
         os.remove(files)
 
     for files in filelistCopy:
         os.remove(files)
+
 
 get_clear_dir()
