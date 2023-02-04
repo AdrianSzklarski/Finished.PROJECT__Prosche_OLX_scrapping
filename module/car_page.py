@@ -177,8 +177,6 @@ class Page:
         link = f'https://www.olx.pl/d/motoryzacja/samochody/porsche/{self.link}'
         dir_html = r'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/html/html.txt'
         driver.get(link)
-        with open(dir_html, 'w') as f:
-            f.write(link)
 
         #  Information on the number of cars found
         elements = driver.find_elements(By.XPATH,
@@ -199,7 +197,7 @@ class Page:
                 self.total = self.total + oneNumber[unpackList]
 
             answer = f'{self.total} Porsche {self.name} models found'
-            tk.Label(self.root, text=answer).place(x=50, y=460)
+            tk.Label(self.root, text=answer).place(x=50, y=480)
 
         #  Downloading thumbnail images of cars
         counter = 1
@@ -325,7 +323,7 @@ class Gallery(Page):
             self.new_text = tk.PanedWindow(orient='vertical')
             self.new_text.place(x=300, y=560)
             result = f'Test text{link}\n' \
-                     f'{self.decribe_car}'
+                     f'{self.Y}'
             tb = tk.Text(self.new_text, height=11, width=75)
             tb.pack(expand=True)
             tb.insert('end', result)
