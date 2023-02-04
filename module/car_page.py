@@ -220,8 +220,13 @@ class Page:
             counter += 1
 
         for num, i in enumerate(range(1, int(self.total)+1)):
-                self.decribe_car = driver.find_elements(By.XPATH,
+            path = join(r'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/text/' + f'text{i}.txt')
+            self.decribe_car = driver.find_elements(By.XPATH,
                                                         f'//*[@id="root"]/div[1]/div[2]/form/div[5]/div/div[2]/div[{i}]')
+
+            info = self.decribe_car[0].text
+            with open(path, 'w') as f:
+                f.write(info)
 
         self.get_small_icons()
 
@@ -294,6 +299,7 @@ class Gallery(Page):
     def get_reset(self):
         python = sys.executable
         os.execl(python, python, *sys.argv)
+        get_dir()
 
     def get_about(self):
         self.new_about = tk.PanedWindow(orient='vertical')
@@ -319,7 +325,7 @@ class Gallery(Page):
             self.new_text = tk.PanedWindow(orient='vertical')
             self.new_text.place(x=300, y=560)
             result = f'Test text{link}\n' \
-                     f'{self.decribe_car[0]}'
+                     f'{self.decribe_car}'
             tb = tk.Text(self.new_text, height=11, width=75)
             tb.pack(expand=True)
             tb.insert('end', result)
@@ -356,22 +362,25 @@ class Gallery(Page):
             self.counter = 0
 
     def get_start_calc(self):
-        # '''Arranging backgrounds for multi gallery'''
-        # self.new_icons = tk.PanedWindow(orient='vertical')
-        # Icons(self.new_icons)
-        # self.new_icons.place(x=950, y=60)
-
         self.get_hist()
 
     def get_hist(self):
         frame = tk.Frame()
 
         fig = Figure(figsize=(4.5, 3.83), dpi=100)
-        # test function
-        y = [i ** 2 for i in range(101)]
+
+        linktext = r'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/text/*txt'
+
+        # cheak empty file, true is empty
+        self.y = []
+        for k in glob.glob(linktext):
+            if os.path.getsize(k) > 0:
+                self.y.append(1)
+            else:
+                self.y.append(0)
 
         plot = fig.add_subplot(111)
-        plot.plot(y)
+        plot.plot(self.y)
 
         canvas = FigureCanvasTkAgg(fig, master=self.root)
         canvas.draw()
