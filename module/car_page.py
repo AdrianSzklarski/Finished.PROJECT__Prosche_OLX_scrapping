@@ -373,11 +373,27 @@ class Gallery(Page):
 
         # cheak empty file, true is empty
         self.y = []
+        help_list = []
         for k in glob.glob(linktext):
             if os.path.getsize(k) > 0:
-                self.y.append(1)
+                with open(k, 'r') as f:
+                    text = f.read()
+                    self.Y = []
+                    if 'zł' in text:
+                        indeX = text.index('zł')
+                        slicE = text[indeX-13:indeX]
+                        indeX2 = slicE.index('\n')
+                        slicE2 = slicE[indeX2:indeX]
+                        indeX3 = slicE2.index(' ')
+                        sliceE3 = slicE2[:indeX3]
+                        sliceE4 = slicE2[indeX3+1:]
+                        price = int(sliceE3+sliceE4)
+                        self.y.append(price)
+                        help_list.append(price)
+                    else:
+                        self.y.append((max(help_list)+min(help_list))/len(self.y))
             else:
-                self.y.append(0)
+                self.y.append((max(help_list)+min(help_list))/len(self.y))
 
         plot = fig.add_subplot(111)
         plot.plot(self.y)
