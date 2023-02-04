@@ -3,7 +3,6 @@ from PIL import Image, ImageTk
 from tkinter import filedialog
 import webbrowser
 import os, glob, sys, time
-import requests
 from os.path import join
 
 
@@ -17,6 +16,7 @@ from Selenium_Porsche.module.small_gal_icons import Icons
 from tkinter.filedialog import asksaveasfile
 
 from matplotlib.figure import Figure
+from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
                                                NavigationToolbar2Tk)
 
@@ -367,7 +367,11 @@ class Gallery(Page):
     def get_hist(self):
         frame = tk.Frame()
 
-        fig = Figure(figsize=(4.5, 3.83), dpi=100)
+
+        fig = plt.Figure(figsize=(4.5, 3.83), dpi=100)
+        plt.axes.labelsize = 16
+        fig.suptitle("Porsche' chart", fontsize=10)
+
 
         linktext = r'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/text/*txt'
 
