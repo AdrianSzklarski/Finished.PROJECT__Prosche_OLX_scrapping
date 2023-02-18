@@ -23,3 +23,6 @@ An application I wrote fills in a form on olx.pl, motoring, Porsche and takes a 
 <br>
 
 <p style="text-align: center">Third preview version of the application (in progress) </p>
+
+<br>
+<p style="text-align: center">Writing the coordinates of the image to a file for the "click" method. The file is mathematically and programmatically advanced, so I am not making it available to the public. If you would like to review it, please send a request for access to the file. I will consider possible sharing. Regards, Adrian. </p>
