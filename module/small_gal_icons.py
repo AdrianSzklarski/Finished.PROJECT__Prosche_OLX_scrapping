@@ -1,10 +1,8 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 import glob, pyautogui
-import pyautogui as py #Import pyautogui
+import pyautogui as py  # Import pyautogui
 import time
-
-
 
 # Photo sizes
 SIZE_X = 150
@@ -28,7 +26,7 @@ class Icons:
         self.my_canvas = tk.Canvas(self.frame, width=850, height=400, bg='#d8d8d9',
                                    scrollregion=(0, 0, 1000, SIZE_Y * round(self.number / 5)))
 
-        self.my_canvas.configure(scrollregion=(0, 0, 850, (self.number/5)*160))
+        self.my_canvas.configure(scrollregion=(0, 0, 850, (self.number / 5) * 160))
         vertibar = tk.Scrollbar(self.frame, orient=tk.VERTICAL)
         vertibar.pack(side=tk.RIGHT, fill=tk.Y)
         vertibar.config(command=self.my_canvas.yview)
@@ -37,8 +35,6 @@ class Icons:
         self.my_canvas.pack(expand=True, side=tk.LEFT, fill=tk.BOTH)
         # self.get_mouse()
         self.get_icons()
-
-
 
     def get_icons(self):
         '''Method to add a mini gallery'''
@@ -59,6 +55,9 @@ class Icons:
         cars = glob.glob(link)
 
         self.tab_render = []
+        self.coordiantion_tab = []
+        link_coord = r'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/text/coordination.txt'
+
         for car in cars:
             load = Image.open(car)
             self.render = ImageTk.PhotoImage(load)
@@ -71,6 +70,9 @@ class Icons:
         if self.number <= 5:  # below 5 photos
             for i in range(1, self.number + 1):
                 self.my_canvas.create_image(-165 + i * 170, 10, image=self.tab_render[i], anchor="nw")
+                coordination = 15 + i * 170, 10
+                self.coordiantion_tab.append(coordination)
+
         elif self.number > 5:  # over 5 photos
             k = int()
             y = []
@@ -86,30 +88,19 @@ class Icons:
                     self.my_canvas.create_image(15 + self.counter * 170, 10 + y[j] * 25,
                                                 image=self.tab_render[j],
                                                 anchor="nw")
-                    # print(self.tab_render[j])
+                    coordination = [15 + self.counter * 170, 10 + y[j] * 25]
+                    self.coordiantion_tab.append(coordination)
                 else:
                     self.counter = 0
                     self.my_canvas.create_image(15 + self.counter * 170, 10 + y[j] * 25,
                                                 image=self.tab_render[j],
                                                 anchor="nw")
-
             else:
                 tk.Label(self.root, text='Wrong Value').place(x=1000, y=156)
 
-    # def get_mouse(self):
-    #     # current mouse x and y
-    #     print(pyautogui.position())
-    #     # current screen resolution width and height
-    #     print(pyautogui.size())
-
-        # print('Press Ctrl-C to quit.')
-        # try:
-        #     while True:
-        #         print(py.position())
-        #         time.sleep(5)
-        # except KeyboardInterrupt:
-        #     print('\n')
-
+        # Save photo coordinates to file for "click" method
+        with open(link_coord, 'w') as f:
+            f.write(str(self.coordiantion_tab))
 
 if __name__ == '__main__':
     root = tk.Tk()

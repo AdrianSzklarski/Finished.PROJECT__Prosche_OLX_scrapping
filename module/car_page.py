@@ -218,13 +218,19 @@ class Page:
             counter += 1
 
         for num, i in enumerate(range(1, int(self.total)+1)):
-            path = join(r'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/text/' + f'text{i}.txt')
+            path = join(r'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/text/' + f'{i}.txt')
             self.decribe_car = driver.find_elements(By.XPATH,
                                                         f'//*[@id="root"]/div[1]/div[2]/form/div[5]/div/div[2]/div[{i}]')
 
             info = self.decribe_car[0].text
             with open(path, 'w') as f:
                 f.write(info)
+
+            # driver.find_elements(By.XPATH, '//*[@id="root"]/div[1]/div[2]/form/div[5]/div/div[2]/div[10]/a/div').click()
+
+            # //*[@id="root"]/div[1]/div[2]/form/div[5]/div/div[2]/div[10]/a/div/div
+            # //*[@id="root"]/div[1]/div[2]/form/div[5]/div/div[2]/div[10]/a
+            # //*[@id="root"]/div[1]/div[2]/form/div[5]/div/div[2]/div[10]/a/div
 
         self.get_small_icons()
 
@@ -309,6 +315,57 @@ class Gallery(Page):
         AboutProgramUs(self.new_aboutUs)
         self.new_aboutUs.place(x=365, y=59.5)
 
+    def get_start_calc(self):
+        self.get_hist()
+
+    def get_hist(self):
+        frame = tk.Frame()
+
+
+        fig = plt.Figure(figsize=(4.5, 3.83), dpi=100)
+        plt.axes.labelsize = 16
+        fig.suptitle("Porsche' chart", fontsize=10)
+
+
+        self.linktext = r'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/text/*txt'
+
+        # cheak empty file, true is empty
+        self.price = []
+        help_list = []
+        for k in glob.glob(self.linktext):
+            if os.path.getsize(k) > 0:
+                with open(k, 'r') as f:
+                    text = f.read()
+                    if 'zł' in text:
+                        indeX = text.index('zł')
+                        slicE = text[indeX-13:indeX]
+                        indeX2 = slicE.index('\n')
+                        slicE2 = slicE[indeX2:indeX]
+                        indeX3 = slicE2.index(' ')
+                        sliceE3 = slicE2[:indeX3]
+                        sliceE4 = slicE2[indeX3+1:]
+                        price = int(sliceE3+sliceE4)
+                        self.price.append(price)
+                        help_list.append(price)
+                    else:
+                        self.price.append((max(help_list)+min(help_list))/len(self.price))
+            else:
+                self.price.append((max(help_list)+min(help_list))/len(self.price))
+
+        plot = fig.add_subplot(111)
+        plot.plot(self.price)
+
+        canvas = FigureCanvasTkAgg(fig, master=self.root)
+        canvas.draw()
+
+        toolbar = NavigationToolbar2Tk(canvas, frame)
+        toolbar.update()
+
+        frame.place(x=1370, y=500)
+        canvas.get_tk_widget().place(x=1370, y=560)
+
+        # print(self.text)
+
     def get_next_photo(self):
         self.lenght = MyGalleryOfCars(self.root).get_read_photo()
         self.counterUp += 1
@@ -321,9 +378,9 @@ class Gallery(Page):
             img.place(x=300, y=60)
 
             self.new_text = tk.PanedWindow(orient='vertical')
-            self.new_text.place(x=300, y=560)
-            result = f'Test text{link}\n' \
-                     f'{self.Y}'
+            self.new_text.place(x=300, y=580)
+            resume = 'Under construction'
+            result = f'Test text: {resume}\n'
             tb = tk.Text(self.new_text, height=11, width=75)
             tb.pack(expand=True)
             tb.insert('end', result)
@@ -347,9 +404,9 @@ class Gallery(Page):
             img.place(x=300, y=60)
 
             self.new_text = tk.PanedWindow(orient='vertical')
-            self.new_text.place(x=300, y=560)
-            result = f'Test text{link}\n' \
-                     f'{self.decribe_car[0]}'
+            self.new_text.place(x=300, y=580)
+            resume = 'Under construction'
+            result = f'Test text: {resume}\n'
             tb = tk.Text(self.new_text, height=11, width=75)
             tb.pack(expand=True)
             tb.insert('end', result)
@@ -358,56 +415,6 @@ class Gallery(Page):
             self.counterUp = self.counterDown
         else:
             self.counter = 0
-
-    def get_start_calc(self):
-        self.get_hist()
-
-    def get_hist(self):
-        frame = tk.Frame()
-
-
-        fig = plt.Figure(figsize=(4.5, 3.83), dpi=100)
-        plt.axes.labelsize = 16
-        fig.suptitle("Porsche' chart", fontsize=10)
-
-
-        linktext = r'/home/adrian/Pulpit/GitHub_Public/Selenium_Porsche/text/*txt'
-
-        # cheak empty file, true is empty
-        self.y = []
-        help_list = []
-        for k in glob.glob(linktext):
-            if os.path.getsize(k) > 0:
-                with open(k, 'r') as f:
-                    text = f.read()
-                    self.Y = []
-                    if 'zł' in text:
-                        indeX = text.index('zł')
-                        slicE = text[indeX-13:indeX]
-                        indeX2 = slicE.index('\n')
-                        slicE2 = slicE[indeX2:indeX]
-                        indeX3 = slicE2.index(' ')
-                        sliceE3 = slicE2[:indeX3]
-                        sliceE4 = slicE2[indeX3+1:]
-                        price = int(sliceE3+sliceE4)
-                        self.y.append(price)
-                        help_list.append(price)
-                    else:
-                        self.y.append((max(help_list)+min(help_list))/len(self.y))
-            else:
-                self.y.append((max(help_list)+min(help_list))/len(self.y))
-
-        plot = fig.add_subplot(111)
-        plot.plot(self.y)
-
-        canvas = FigureCanvasTkAgg(fig, master=self.root)
-        canvas.draw()
-
-        toolbar = NavigationToolbar2Tk(canvas, frame)
-        toolbar.update()
-
-        frame.place(x=1370, y=500)
-        canvas.get_tk_widget().place(x=1370, y=560)
 
     def get_text_field(self):
         self.new_text = tk.PanedWindow(orient='vertical')
